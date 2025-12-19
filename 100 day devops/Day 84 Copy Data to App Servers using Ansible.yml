@@ -1,0 +1,9 @@
+- name: My first play
+  hosts: appservers
+  tasks:
+   - name: Copy HTML file
+     become: true
+     ansible.builtin.copy:
+       src: /usr/src/dba/index.html
+       dest: /opt/dba
+       

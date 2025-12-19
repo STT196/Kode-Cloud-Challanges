@@ -1,0 +1,6 @@
+FROM python:3.9-slim
+COPY . /app
+WORKDIR /app
+RUN pip install -r src/requirements.txt
+CMD ["python", "src/server.py"]
+EXPOSE 8088

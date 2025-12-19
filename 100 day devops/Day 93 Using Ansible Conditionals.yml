@@ -1,0 +1,30 @@
+- name: playbook
+  hosts: all
+  become: yes
+  tasks:
+    - name: copy blog.txt to /opt/data/
+      ansible.builtin.copy:
+        src: /usr/src/data/blog.txt
+        dest: /opt/data/blog.txt
+        owner: tony
+        group: tony
+        mode: '0644'
+      when: inventory_hostname == "stapp01"
+    
+    - name: copy story.txt
+      ansible.builtin.copy:
+        src: /usr/src/data/story.txt
+        dest: /opt/data/story.txt
+        owner: steve
+        group: steve
+        mode: '0644'
+      when: inventory_hostname == "stapp02"
+
+    - name: copy media.txt
+      ansible.builtin.copy:
+        src: /usr/src/data/media.txt
+        dest: /opt/data/media.txt
+        owner: banner
+        group: banner
+        mode: '0644'
+      when: inventory_hostname == "stapp03"

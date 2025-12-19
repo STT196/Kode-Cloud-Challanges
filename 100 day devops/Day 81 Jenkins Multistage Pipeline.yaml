@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    parameters{
+        credentials(name: 'SSH_CRED')
+    }
+    stages {
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application code to Storage Server...'
+                withCredentials([usernamePassword(credentialsId: params.SSH_CRED, usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh '''
+                        echo "Deploying as user: $USER"
+                        sshpass -p "$PASS" ssh -o StrictHostKeyChecking=no $USER@ststor01 '
+                            cd /var/www/html &&
+                            git pull'
+                    '''
+                }
+            }
+        }
+        
+    stage('Test'){
+        steps{
+             echo 'Testing if application is reachable...'
+             sh '''
+                    echo "Checking application status..."
+                    if ! curl -s --head http://stlb01:8091 | grep "200 OK" > /dev/null; then
+                        echo "❌ Application test failed: Site not reachable!"
+                        exit 1
+                    else
+                        echo "✅ Application is up and running!"
+                    fi
+                '''
+        }
+    }
+    }
+}

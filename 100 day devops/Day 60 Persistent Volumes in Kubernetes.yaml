@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-nautilus
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-nautilus
+spec:
+  storageClassName: manual
+  resources:
+    requests:
+      storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-nautilus
+  labels:
+    app: pod-nautilus #if this label is changed, service selector should also be changed eg: name in service selector also named as name: pod-nautilus
+spec:
+  containers:
+    - name: container-nautilus
+      image: httpd:latest
+      volumeMounts:
+        - mountPath: "/usr/local/apache2/htdocs"
+          name: volume-nautilus
+  volumes:
+    - name: volume-nautilus
+      persistentVolumeClaim:
+        claimName: pvc-nautilus
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-nautilus
+spec:
+  selector:
+    app: pod-nautilus
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30008
+  type: NodePort

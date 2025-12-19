@@ -1,0 +1,46 @@
+- name: Manage ACLs on files using Ansible
+  hosts: all
+  become: yes
+  tasks:
+    - name: create blog.txt
+      ansible.builtin.file:
+        path: /opt/devops/blog.txt
+        state: touch
+      when: inventory_hostname == "stapp01"
+
+    - name: set ACL for blog.txt
+      ansible.posix.acl:
+        path: /opt/devops/blog.txt
+        entity: tony
+        etype: group
+        state: present
+        permissions: r
+      when: inventory_hostname == "stapp01"
+
+    - name: create story.txt
+      ansible.builtin.file:
+        path: /opt/devops/story.txt
+        state: touch
+      when: inventory_hostname == "stapp02"
+    - name: set ACL for story.txt
+      ansible.posix.acl:
+        path: /opt/devops/story.txt
+        entity: steve
+        etype: user
+        state: present
+        permissions: rw
+      when: inventory_hostname == "stapp02"
+
+    - name: create media.txt
+      ansible.builtin.file:
+        path: /opt/devops/media.txt
+        state: touch
+      when: inventory_hostname == "stapp03"
+    - name: set ACL for media.txt
+      ansible.posix.acl:
+        path: /opt/devops/media.txt
+        entity: banner
+        etype: group
+        state: present
+        permissions: rw
+      when: inventory_hostname == "stapp03"

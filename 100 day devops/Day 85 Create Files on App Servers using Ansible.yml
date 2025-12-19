@@ -1,0 +1,23 @@
+- name: My first play
+  hosts: appservers
+  tasks:
+    - name: create an empty file
+      ansible.builtin.file:
+        path: /tmp/nfsshare.txt
+        state: touch
+        mode: "0655"
+    - name: create a directory
+      file:
+        path: /tmp/nfsshare.txt
+        owner: >-
+          {%- if inventory_hostname == 'stapp01' %}tony
+          {%- elif inventory_hostname == 'stapp02' %}steve
+          {%- elif inventory_hostname == 'stapp03' %}banner
+          {%- endif %}
+          
+        group: >-
+          {%- if inventory_hostname == 'stapp01' %}tony
+          {%- elif inventory_hostname == 'stapp02' %}steve
+          {%- elif inventory_hostname == 'stapp03' %}banner
+          {%- endif %}
+      when: inventory_hostname in ['stapp01', 'stapp02', 'stapp03']

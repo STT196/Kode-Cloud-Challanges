@@ -1,0 +1,7 @@
+- name: My first play
+  hosts: appservers
+  tasks:
+   - name: create an empty file
+     ansible.builtin.file:
+       path: /tmp/file.txt
+       state: touch

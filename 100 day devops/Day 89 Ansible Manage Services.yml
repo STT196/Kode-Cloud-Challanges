@@ -1,0 +1,18 @@
+- name: install vsftpd on all app servers.
+  hosts: all
+  become: yes
+  tasks:
+    - name: install vsftpd 
+      ansible.builtin.dnf:
+        name: vsftpd
+        state: present
+
+    - name: start vsftpd service
+      ansible.builtin.systemd:
+        name: vsftpd
+        state: started
+        enabled: yes
+
+    - name: vsftpd service status check
+      ansible.builtin.shell: "systemctl is-active vsftpd"
+

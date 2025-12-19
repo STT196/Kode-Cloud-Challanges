@@ -1,0 +1,8 @@
+- name: My first play
+  hosts: appservers
+  become: yes
+  tasks:
+    - name: install zip package
+      ansible.builtin.yum:
+        name: zip
+        state: present

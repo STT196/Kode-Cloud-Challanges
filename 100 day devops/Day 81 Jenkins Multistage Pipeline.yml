@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Deploy') {
+            steps {
+                echo 'Deploying Application...'
+                sh '''
+                    sshpass -p "Bl@kW" ssh -o StrictHostKeyChecking=no natasha@ststor01 "cd /var/www/html && git pull"
+                '''
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing if application is reachable...'
+                sh '''
+                     if ! curl -s --head http://stlb01:8091 | grep "200 OK" > /dev/null; then
+                        echo "❌ Application test failed: Site not reachable!"
+                        exit 1
+                    else
+                        echo "✅ Application is up and running!"
+                    fi
+                '''
+            }
+        }
+    }
+}
