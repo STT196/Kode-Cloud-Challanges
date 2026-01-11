@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lambda function using a CloudFormation stack to automate infrastructure deployment
+Resources:
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lambda_execution_role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  DatacenterLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: datacenter-lambda
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: python3.9
+      Code:
+        ZipFile: |
+          def handler(event, context):
+              return {
+                  'statusCode': 200,
+                  'body': 'Welcome to KKE AWS Labs!'
+              }
+      Timeout: 5
